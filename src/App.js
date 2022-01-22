@@ -1,5 +1,5 @@
-import './App.css';
-import {TaskPage} from './components/TaskPage'
+import "./App.css";
+import { TaskPage } from "./components/TaskPage";
 
 function App() {
   return (

@@ -1,25 +1,23 @@
-import React, { useState } from "react";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 
-const initialValues = {
-  name: "",
-  age: "",
-  email: "",
-  phone: "",
-};
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { addItem } from "../actions/action";
 
-const initialErrors = {
-  nameErr: "",
-  ageErr: "",
-  emailErr: "",
-  phoneErr: "",
-};
+import {
+  initialValues,
+  initialErrors,
+  emailPattern,
+  phonePattern,
+} from "../utility/types";
 
 export const TaskPage = () => {
   const [values, setValues] = useState(initialValues);
   const [errors, setErrors] = useState(initialErrors);
-  const [list, setList] = useState([]);
+
+  const stateData = useSelector((x) => x.items);
+  const dispatch = useDispatch();
 
   const handleInput = (e) => {
     const { name, value } = e.target;
@@ -57,13 +55,7 @@ export const TaskPage = () => {
     });
   };
 
-  const handleErrors = () => {
-    var emailPattern = new RegExp(
-      /^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i
-    );
-
-    var phonePattern = new RegExp("^[0-9]{10}$");
-
+  const validation = () => {
     if (values.name.length === 0) {
       setErrors({ ...errors, nameErr: "This is a required field" });
       return false;
@@ -114,8 +106,8 @@ export const TaskPage = () => {
   };
 
   const handleSubmit = () => {
-    let isValid = handleErrors();
-    if (isValid) setList([...list, values]);
+    let isValid = validation();
+    if (isValid) dispatch(addItem(values));
   };
 
   const handleReset = () => {
@@ -206,7 +198,7 @@ export const TaskPage = () => {
       </div>
       <div>
         <h2>List of entries</h2>
-        {list.map((obj) => (
+        {stateData.map((obj) => (
           <ul key={obj.name}>
             <li>{obj.name}</li>
             <li>{obj.age}</li>
